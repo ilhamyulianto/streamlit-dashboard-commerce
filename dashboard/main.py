@@ -27,16 +27,14 @@ max_date = all_df["order_approved_at"].max()
 
 # Sidebar
 with st.sidebar:
-    # Title
+    # Title and Image
     st.title("ILHAM YULIANTO DASHBOARD")
+    st.image("C:\ilham files\informatika ilham\Bangkit - ML 24\code\streamlit-commerce\dashboard\OSJUR_DAY_1_20231230_0259.JPG", use_column_width=True)  
 
     # Date Range
-    start_date, end_date = st.date_input(
-        label="Select Date Range",
-        value=[min_date, max_date],
-        min_value=min_date,
-        max_value=max_date
-    )
+    st.subheader("Select Date Range")
+    start_date = st.date_input("Start Date", min_value=min_date, max_value=max_date, value=min_date)
+    end_date = st.date_input("End Date", min_value=min_date, max_value=max_date, value=max_date)
 
 # Main
 main_df = all_df[(all_df["order_approved_at"] >= str(start_date)) & 
@@ -53,7 +51,7 @@ state, most_common_state = function.create_bystate_df()
 order_status, common_status = function.create_order_status()
 
 # Title
-st.header("E-Commerce Dashboard :convenience_store:")
+st.title("E-Commerce Dashboard")
 
 # Daily Orders
 st.subheader("Daily Orders")
@@ -62,11 +60,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_order = daily_orders_df["order_count"].sum()
-    st.markdown(f"Total Order: **{total_order}**")
+    st.metric("Total Order", total_order)
 
 with col2:
     total_revenue = format_currency(daily_orders_df["revenue"].sum(), "IDR", locale="id_ID")
-    st.markdown(f"Total Revenue: **{total_revenue}**")
+    st.metric("Total Revenue", total_revenue)
 
 fig, ax = plt.subplots(figsize=(12, 6))
 ax.plot(
@@ -86,11 +84,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_spend = format_currency(sum_spend_df["total_spend"].sum(), "IDR", locale="id_ID")
-    st.markdown(f"Total Spend: **{total_spend}**")
+    st.metric("Total Spend", total_spend)
 
 with col2:
     avg_spend = format_currency(sum_spend_df["total_spend"].mean(), "IDR", locale="id_ID")
-    st.markdown(f"Average Spend: **{avg_spend}**")
+    st.metric("Average Spend", avg_spend)
 
 fig, ax = plt.subplots(figsize=(12, 6))
 ax.plot(
@@ -110,32 +108,32 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_items = sum_order_items_df["product_count"].sum()
-    st.markdown(f"Total Items: **{total_items}**")
+    st.metric("Total Items", total_items)
 
 with col2:
     avg_items = sum_order_items_df["product_count"].mean()
-    st.markdown(f"Average Items: **{avg_items}**")
+    st.metric("Average Items", avg_items)
 
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(45, 25))
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
 
 colors = ["#068DA9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
 
 sns.barplot(x="product_count", y="product_category_name_english", data=sum_order_items_df.head(5), palette=colors, ax=ax[0])
 ax[0].set_ylabel(None)
-ax[0].set_xlabel("Number of Sales", fontsize=30)
-ax[0].set_title("Produk paling banyak terjual", loc="center", fontsize=50)
-ax[0].tick_params(axis ='y', labelsize=35)
-ax[0].tick_params(axis ='x', labelsize=30)
+ax[0].set_xlabel("Number of Sales", fontsize=15)
+ax[0].set_title("Top Selling Products", loc="center", fontsize=20)
+ax[0].tick_params(axis ='y', labelsize=12)
+ax[0].tick_params(axis ='x', labelsize=12)
 
 sns.barplot(x="product_count", y="product_category_name_english", data=sum_order_items_df.sort_values(by="product_count", ascending=True).head(5), palette=colors, ax=ax[1])
 ax[1].set_ylabel(None)
-ax[1].set_xlabel("Number of Sales", fontsize=30)
+ax[1].set_xlabel("Number of Sales", fontsize=15)
 ax[1].invert_xaxis()
 ax[1].yaxis.set_label_position("right")
 ax[1].yaxis.tick_right()
-ax[1].set_title("Produk paling sedikit terjual", loc="center", fontsize=50)
-ax[1].tick_params(axis='y', labelsize=35)
-ax[1].tick_params(axis='x', labelsize=30)
+ax[1].set_title("Least Selling Products", loc="center", fontsize=20)
+ax[1].tick_params(axis='y', labelsize=12)
+ax[1].tick_params(axis='x', labelsize=12)
 
 st.pyplot(fig)
 
@@ -145,11 +143,11 @@ col1,col2 = st.columns(2)
 
 with col1:
     avg_review_score = review_score.mean()
-    st.markdown(f"Average Review Score: **{avg_review_score}**")
+    st.metric("Average Review Score", avg_review_score)
 
 with col2:
     most_common_review_score = review_score.value_counts().index[0]
-    st.markdown(f"Most Common Review Score: **{most_common_review_score}**")
+    st.metric("Most Common Review Score", most_common_review_score)
 
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.barplot(x=review_score.index, 
@@ -166,11 +164,11 @@ st.pyplot(fig)
 
 # Customer Demographic
 st.subheader("Customer Demographic")
-tab1, tab2, tab3 = st.tabs(["State", "Order Status", "Geolocation"])
+tab1, tab2, tab3 = st.columns(3)
 
 with tab1:
     most_common_state = state.customer_state.value_counts().index[0]
-    st.markdown(f"Most Common State: **{most_common_state}**")
+    st.metric("Most Common State", most_common_state)
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x=state.customer_state.value_counts().index,
@@ -187,7 +185,7 @@ with tab1:
 
 with tab2:
     common_status_ = order_status.value_counts().index[0]
-    st.markdown(f"Most Common Order Status: **{common_status_}**")
+    st.metric("Most Common Order Status", common_status_)
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x=order_status.index,
@@ -206,8 +204,6 @@ with tab3:
     map_plot.plot()
 
     with st.expander("See Explanation"):
-        st.write('Sesuai dengan grafik yang sudah dibuat, ada lebih banyak pelanggan di bagian tenggara dan selatan. Informasi lainnya, ada lebih banyak pelanggan di kota-kota yang merupakan ibu kota (São Paulo, Rio de Janeiro, Porto Alegre, dan lainnya).')
+        st.write('Based on the generated plot, there are more customers in the southeastern and southern regions. Additionally, there is a higher concentration of customers in capital cities like São Paulo, Rio de Janeiro, and Porto Alegre.')
 
 st.caption('ilhamyulianto-2024')
-
-
